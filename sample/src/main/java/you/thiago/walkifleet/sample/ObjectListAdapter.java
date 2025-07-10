@@ -1,4 +1,4 @@
-package you.thiago.walkifleet;
+package you.thiago.walkifleet.sample;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+
+import you.thiago.walkifleet.FleetObject;
 
 public class ObjectListAdapter extends ArrayAdapter<FleetObject>
 {

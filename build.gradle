@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+project.ext {
+    minSdkVersion = 21
+    targetSdkVersion = 35
+    ndkVersion = "27.0.12077973"
+    versionCode = 1
+    versionName = '0.1'
+    name = 'walkifleet'
+    namespace = 'you.thiago.walkifleet'
+    namespaceSample = "you.thiago.walkifleet.sample"
+}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = "https://plugins.gradle.org/m2/" }
+        
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.3'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url "https://jitpack.io" }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
+
+apply from: rootProject.file('dependencies.gradle')

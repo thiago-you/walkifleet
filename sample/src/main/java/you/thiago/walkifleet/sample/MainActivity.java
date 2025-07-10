@@ -1,10 +1,7 @@
-package you.thiago.walkifleet;
+package you.thiago.walkifleet.sample;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,27 +15,26 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements MSGListener
+import you.thiago.walkifleet.Device;
+import you.thiago.walkifleet.FleetObject;
+import you.thiago.walkifleet.MSGListener;
+import you.thiago.walkifleet.Process;
+import you.thiago.walkifleet.Protocol;
+import you.thiago.walkifleet.Random;
+import you.thiago.walkifleet.VoIP;
+
+public class MainActivity extends AppCompatActivity implements MSGListener, Process.ProcessControl
 {
-    private static final int PING_INTERVAL = 5000;
+    private static final you.thiago.walkifleet.Process Process = new Process();
 
     String UserID, DeviceID;
     ListView groupView, userView;
     TextView selectedView;
     Button pttBtn;
-    String SelectedObjectId = "";
-    String SelectedObjectName = "";
-    String SelectedUserId = "";
-    String SelectedObjectType = "";
-    String ActiveCallId = "";
-    public ArrayList<FleetObject> groupObjects = new ArrayList<FleetObject>();
-    public ArrayList<FleetObject> userObjects = new ArrayList<FleetObject>();
-    Timer pingTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,21 +47,21 @@ public class MainActivity extends AppCompatActivity implements MSGListener
         userView = (ListView)findViewById(R.id.userView);
         selectedView = (TextView)findViewById(R.id.selectedObjectView);
         pttBtn = (Button) findViewById(R.id.pttBtn);
-        ObjectListAdapter groupAdapter = new ObjectListAdapter(this, R.layout.rowlayout, groupObjects);
+        ObjectListAdapter groupAdapter = new ObjectListAdapter(this, R.layout.rowlayout, Process.groupObjects);
         groupView.setAdapter(groupAdapter);
-        ObjectListAdapter userAdapter = new ObjectListAdapter(this, R.layout.rowlayout, userObjects);
+        ObjectListAdapter userAdapter = new ObjectListAdapter(this, R.layout.rowlayout, Process.userObjects);
         userView.setAdapter(userAdapter);
         groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
                 groupView.setSelector(R.color.colorSelector);
                 groupView.setSelected(true);
-                FleetObject fo = groupObjects.get(position);
-                SelectedObjectName = fo.objectName;
-                SelectedObjectId = fo.objectId;
-                SelectedUserId = fo.userId;
-                SelectedObjectType = "group";
-                selectedView.setText(SelectedObjectName);
+                FleetObject fo = Process.groupObjects.get(position);
+                Process.SelectedObjectName = fo.objectName;
+                Process.SelectedObjectId = fo.objectId;
+                Process.SelectedUserId = fo.userId;
+                Process.SelectedObjectType = "group";
+                selectedView.setText(Process.SelectedObjectName);
                 userView.setSelected(false);
                 userView.setSelector(android.R.color.transparent);
             }
@@ -75,12 +71,12 @@ public class MainActivity extends AppCompatActivity implements MSGListener
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
                 userView.setSelector(R.color.colorSelector);
                 userView.setSelected(true);
-                FleetObject fo = userObjects.get(position);
-                SelectedObjectName = fo.objectName;
-                SelectedObjectId = fo.objectId;
-                SelectedUserId = fo.userId;
-                SelectedObjectType = "private";
-                selectedView.setText(SelectedObjectName);
+                FleetObject fo = Process.userObjects.get(position);
+                Process.SelectedObjectName = fo.objectName;
+                Process.SelectedObjectId = fo.objectId;
+                Process.SelectedUserId = fo.userId;
+                Process.SelectedObjectType = "private";
+                selectedView.setText(Process.SelectedObjectName);
                 groupView.setSelected(false);
                 groupView.setSelector(android.R.color.transparent);
             }
@@ -93,19 +89,19 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                 {
                     int action = arg1.getAction();
                     if(action == MotionEvent.ACTION_DOWN) {
-                        if (SelectedObjectId.equals("")) return false;
+                        if (Process.SelectedObjectId.equals("")) return false;
                         JSONObject pttrequest = new JSONObject();
                         pttrequest.put("MessageID", "PTT_REQUEST");
-                        pttrequest.put("Destination", SelectedObjectId);
-                        pttrequest.put("Type", SelectedObjectType.equals("group") ? Protocol.PTT_REQUEST.VOICE_GROUP_PRESS : Protocol.PTT_REQUEST.VOICE_PRIVATE_PRESS);
+                        pttrequest.put("Destination", Process.SelectedObjectId);
+                        pttrequest.put("Type", Process.SelectedObjectType.equals("group") ? Protocol.PTT_REQUEST.VOICE_GROUP_PRESS : Protocol.PTT_REQUEST.VOICE_PRIVATE_PRESS);
                         Protocol.sendMessage(pttrequest);
                         return true;
                     } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_OUTSIDE) {
-                        if (SelectedObjectId.equals("")) return false;
+                        if (Process.SelectedObjectId.equals("")) return false;
                         JSONObject pttrequest = new JSONObject();
                         pttrequest.put("MessageID", "PTT_REQUEST");
-                        pttrequest.put("Destination", SelectedObjectId);
-                        pttrequest.put("Type", SelectedObjectType.equals("group") ? Protocol.PTT_REQUEST.VOICE_GROUP_RELEASE : Protocol.PTT_REQUEST.VOICE_PRIVATE_RELEASE);
+                        pttrequest.put("Destination", Process.SelectedObjectId);
+                        pttrequest.put("Type", Process.SelectedObjectType.equals("group") ? Protocol.PTT_REQUEST.VOICE_GROUP_RELEASE : Protocol.PTT_REQUEST.VOICE_PRIVATE_RELEASE);
                         Protocol.sendMessage(pttrequest);
                         return true;
                     }
@@ -168,11 +164,11 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                     });
                     break;
                 case "CONFIG_SERVER_RESPONSE_ACK":
-                        try{
-                            JSONObject login = new JSONObject();
-                            login.put("MessageID", "LOGIN");
-                            Protocol.sendMessage(login);
-                        }catch(Exception ex){}
+                    try{
+                        JSONObject login = new JSONObject();
+                        login.put("MessageID", "LOGIN");
+                        Protocol.sendMessage(login);
+                    }catch(Exception ex){}
                     break;
                 case "LOGIN_RESPONSE":
                     Protocol.isConnected = true;
@@ -182,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                 case "DEVICE_CONTEXT":
                     SetPingTimer();
                     Protocol.PingTimeOut = msg.getInt("PingTimeout");
-                    pingTimer = new Timer();
-                    pingTimer.scheduleAtFixedRate(new Protocol.PingTask(),Protocol.PingTimeOut,Protocol.PingTimeOut);
+                    Process.pingTimer = new Timer();
+                    Process.pingTimer.scheduleAtFixedRate(new Protocol.PingTask(),Protocol.PingTimeOut,Protocol.PingTimeOut);
                     break;
                 case "PING":
                     Protocol.PingTimeOutTicks = 0;
@@ -198,14 +194,14 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                         public void run() {
                             switch (dataType)
                             {
-                            case 12: //GROUPS
-                                ProcessDataxGroups(objects, opType);
-                                ((ObjectListAdapter)groupView.getAdapter()).notifyDataSetChanged();
-                                break;
-                            case 10: //DEVICES
-                                ProcessDataxUsers(objects, opType);
-                                ((ObjectListAdapter)userView.getAdapter()).notifyDataSetChanged();
-                                break;
+                                case 12: //GROUPS
+                                    Process.ProcessDataxGroups(objects, opType);
+                                    ((ObjectListAdapter)groupView.getAdapter()).notifyDataSetChanged();
+                                    break;
+                                case 10: //DEVICES
+                                    Process.ProcessDataxUsers(objects, opType, DeviceID);
+                                    ((ObjectListAdapter)userView.getAdapter()).notifyDataSetChanged();
+                                    break;
                             }
                         }
                     });
@@ -225,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ProcessPTTControl(pttmsg);
+                            Process.ProcessPTTControl(pttmsg, DeviceID, MainActivity.this);
                         }
                     });
                     break;
@@ -234,13 +230,75 @@ public class MainActivity extends AppCompatActivity implements MSGListener
         catch(Exception e){}
     }
 
+    @Override
+    public void processControl(JSONObject jptt)
+    {
+        try
+        {
+            int control = jptt.getInt("Control");
+            String sourceId = jptt.getString("SourceID");
+            String callId = jptt.getString("CallID");
+
+            switch (control) {
+                case Protocol.PTT_CONTROL.VOICE_GROUP_ENTER:
+                    selectedView.setText(Process.SelectedObjectName);
+                    break;
+                case Protocol.PTT_CONTROL.VOICE_PRIVATE_ENTER:
+                    selectedView.setText(Process.SelectedObjectName);
+                    break;
+                case Protocol.PTT_CONTROL.VOICE_PRIVATE_PRESSED:
+                case Protocol.PTT_CONTROL.VOICE_GROUP_PRESSED:
+                    if (Process.ActiveCallId.equals(callId)) {
+                        if (sourceId.equals(DeviceID)) {
+                            pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+                        } else {
+                            pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
+                        }
+                    }
+                    break;
+                case Protocol.PTT_CONTROL.VOICE_PRIVATE_RELEASED:
+                case Protocol.PTT_CONTROL.VOICE_GROUP_RELEASED:
+                    if (Process.ActiveCallId.equals(callId)) {
+                        pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
+                    }
+                    break;
+                case Protocol.PTT_CONTROL.VOICE_PRIVATE_END:
+                case Protocol.PTT_CONTROL.VOICE_GROUP_END:
+                    if (Process.ActiveCallId.equals(callId)) {
+                        pttBtn.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+
+                        if (groupView.isSelected()) {
+                            FleetObject fo = Process.groupObjects.get(groupView.getCheckedItemPosition());
+                            Process.SelectedObjectId = fo.objectId;
+                            Process.SelectedObjectName = fo.objectName;
+                            Process.SelectedUserId = "";
+                            Process.SelectedObjectType = "group";
+                        } else if (userView.isSelected()) {
+                            FleetObject fo = Process.userObjects.get(userView.getCheckedItemPosition());
+                            Process.SelectedObjectId = fo.objectId;
+                            Process.SelectedObjectName = fo.objectName;
+                            Process.SelectedUserId = fo.userId;
+                            Process.SelectedObjectType = "private";
+                        }
+
+                        selectedView.setText(Process.SelectedObjectName);
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.e("PTT_CONTROL", ex.toString());
+        }
+    }
+
     private void SetPingTimer()
     {
-        if (pingTimer != null)
-            pingTimer.cancel();
+        if (Process.pingTimer != null)
+            Process.pingTimer.cancel();
 
-        pingTimer = new Timer();
-        pingTimer.scheduleAtFixedRate(new TimerTask()
+        Process.pingTimer = new Timer();
+        Process.pingTimer.scheduleAtFixedRate(new TimerTask()
         {
             @Override
             public void run()
@@ -255,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                 {
                 }
             }
-        }, PING_INTERVAL, PING_INTERVAL);
+        }, Process.PING_INTERVAL, Process.PING_INTERVAL);
     }
 
     @Override
@@ -264,8 +322,8 @@ public class MainActivity extends AppCompatActivity implements MSGListener
             @Override
             public void run() {
                 selectedView.setText("Reconnecting ...");
-                groupObjects.clear();
-                userObjects.clear();
+                Process.groupObjects.clear();
+                Process.userObjects.clear();
                 ((ObjectListAdapter)groupView.getAdapter()).notifyDataSetChanged();
                 ((ObjectListAdapter)userView.getAdapter()).notifyDataSetChanged();
                 //reconnect again
@@ -282,207 +340,5 @@ public class MainActivity extends AppCompatActivity implements MSGListener
                 selectedView.setText("");
             }
         });
-    }
-
-    private void ProcessPTTControl(JSONObject jptt)
-    {
-        try
-        {
-            int control = jptt.getInt("Control");
-            String sourceId = jptt.getString("SourceID");
-            String sourceName = jptt.getString("SourceName");
-            String targetId = jptt.getString("TargetID");
-            String targetName = jptt.getString("TargetName");
-            String callId = jptt.getString("CallID");
-
-            switch (control)
-            {
-                case Protocol.PTT_CONTROL.VOICE_PRIVATE_BEGIN:
-                    JSONObject pttConfirm = new JSONObject();
-                    pttConfirm.put("MessageID", "PTT_RESPONSE");
-                    pttConfirm.put("Destination", sourceId);
-                    pttConfirm.put("Response", 0);
-                    pttConfirm.put("Type", (int) Protocol.PTT_REQUEST.VOICE_PRIVATE_PRESS);
-                    Protocol.sendMessage(pttConfirm);
-                    break;
-                case Protocol.PTT_CONTROL.VOICE_GROUP_ENTER:
-                    ActiveCallId = callId;
-                    SelectedObjectType = "group";
-                    SelectedObjectName = targetName;
-                    SelectedObjectId = targetId;
-                    selectedView.setText(SelectedObjectName);
-                    break;
-                case Protocol.PTT_CONTROL.VOICE_PRIVATE_ENTER:
-                    ActiveCallId = callId;
-                    SelectedObjectType = "private";
-                    if (sourceId.equals(DeviceID))
-                    {
-                        SelectedObjectName = targetName;
-                        SelectedObjectId = targetId;
-                        selectedView.setText(SelectedObjectName);
-                    }
-                    else
-                    {
-                        SelectedObjectName = sourceName;
-                        SelectedObjectId = sourceId;
-                        selectedView.setText(SelectedObjectName);
-                    }
-                    break;
-                case Protocol.PTT_CONTROL.VOICE_PRIVATE_PRESSED:
-                case Protocol.PTT_CONTROL.VOICE_GROUP_PRESSED:
-                    if (ActiveCallId.equals(callId))
-                    {
-                        if (sourceId.equals(DeviceID)) //TX
-                        {
-                            pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
-                            VoIP.record.startRecording();
-                            VoIP.tx = true;
-                        }
-                        else
-                        {
-                            VoIP.StartAnnonceTimer();
-                            VoIP.track.play();
-                            pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-                            VoIP.rx = true;
-                        }
-                    }
-                    break;
-                case Protocol.PTT_CONTROL.VOICE_PRIVATE_RELEASED:
-                case Protocol.PTT_CONTROL.VOICE_GROUP_RELEASED:
-                    VoIP.StopAnnonceTimer();
-                    if (ActiveCallId.equals(callId))
-                    {
-                        pttBtn.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
-                        if(VoIP.rx) VoIP.track.stop();
-                        if(VoIP.tx) VoIP.record.stop();
-                        VoIP.tx = false;
-                        VoIP.rx = false;
-                        VoIP.sequenceNumber = 0;
-                        VoIP.timestamp = 0;
-                    }
-                    break;
-                case Protocol.PTT_CONTROL.VOICE_PRIVATE_END:
-                case Protocol.PTT_CONTROL.VOICE_GROUP_END:
-                    if (ActiveCallId.equals(callId))
-                    {
-                        pttBtn.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-                        ActiveCallId = "";
-                        SelectedObjectId = "";
-                        SelectedObjectName = "";
-                        SelectedObjectType = "";
-                        selectedView.setText(SelectedObjectName);
-
-                        if (groupView.isSelected())
-                        {
-                            FleetObject fo = groupObjects.get(groupView.getCheckedItemPosition());
-                            SelectedObjectId = fo.objectId;
-                            SelectedObjectName = fo.objectName;
-                            SelectedUserId = "";
-                            SelectedObjectType = "group";
-                            selectedView.setText(SelectedObjectName);
-                        }
-                        else if (userView.isSelected())
-                        {
-                            FleetObject fo = userObjects.get(userView.getCheckedItemPosition());
-                            SelectedObjectId = fo.objectId;
-                            SelectedObjectName = fo.objectName;
-                            SelectedUserId = fo.userId;
-                            SelectedObjectType = "private";
-                            selectedView.setText(SelectedObjectName);
-                        }
-                    }
-                    break;
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.e("PTT_CONTROL", ex.toString());
-        }
-    }
-    private void ProcessDataxGroups(JSONArray grps, int op)
-    {
-        try
-        {
-            FleetObject grp;
-            if (op == 0) groupObjects.clear();
-            for (int i = 0; i < grps.length(); i++)
-            {
-                JSONObject jo = grps.getJSONObject(i);
-                switch (op)
-                {
-                    case 0: //INITIALIZE
-                    case 1: //ADD
-                        grp = new FleetObject(jo.getString("ID"), jo.getString("Name"), "");
-                        groupObjects.add(grp);
-                        break;
-                    case 3: //CHANGE
-                        grp = new FleetObject(jo.getString("ID"), jo.getString("Name"), "");
-                        for(int j = 0; j < groupObjects.size(); j++)
-                        {
-                            if(groupObjects.get(j).objectId.equals(grp.objectId))
-                            {
-                                groupObjects.get(j).objectName = grp.objectName;
-                                break;
-                            }
-                        }
-                        break;
-                    case 2: //REMOVE
-                        String gid = jo.getString("ID");
-                        for(int j = 0; j < groupObjects.size(); j++)
-                        {
-                            if(groupObjects.get(j).objectId.equals(gid))
-                            {
-                                groupObjects.remove(j);
-                                break;
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-        catch(Exception e) { }
-    }
-    private void ProcessDataxUsers(JSONArray usrs, int op)
-    {
-        try
-        {
-            FleetObject usr;
-            if (op == 0) userObjects.clear();
-            for (int i = 0; i < usrs.length(); i++)
-            {
-                JSONObject jo = usrs.getJSONObject(i);
-                switch (op)
-                {
-                    case 0: //INITIALIZE
-                    case 1: //ADD
-                        usr = new FleetObject(jo.getString("ID"), jo.getString("UserName"), jo.getString("UserID"));
-                        if(!usr.objectId.equals(DeviceID)) userObjects.add(usr);
-                        break;
-                    case 3: //CHANGE
-                        usr = new FleetObject(jo.getString("ID"), jo.getString("UserName"), jo.getString("UserID"));
-                        for(int j = 0; j < userObjects.size(); j++)
-                        {
-                            if(userObjects.get(j).objectId.equals(usr.objectId))
-                            {
-                                userObjects.get(j).objectName = usr.objectName;
-                                break;
-                            }
-                        }
-                        break;
-                    case 2: //REMOVE
-                        String uid = jo.getString("ID");
-                        for(int j = 0; j < userObjects.size(); j++)
-                        {
-                            if(userObjects.get(j).objectId.equals(uid))
-                            {
-                                userObjects.remove(j);
-                                break;
-                            }
-                        }
-                        break;
-                }
-            }
-        }
-        catch(Exception e) { }
     }
 }

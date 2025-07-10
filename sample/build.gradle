@@ -1,4 +1,6 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 Properties properties = new Properties()
 def propertiesFile = rootProject.file('env.properties')
@@ -12,46 +14,18 @@ if (propertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion = 35
-
-    namespace = "you.thiago.walkifleet"
-    ndkVersion = "27.0.12077973"
+    namespace = rootProject.ext.namespaceSample
+    compileSdk rootProject.ext.targetSdkVersion
 
     defaultConfig {
-        applicationId "com.example.walkiefleetclientandroid"
-        minSdkVersion 21
-        targetSdkVersion 35
-        versionCode 1
-        versionName "0.1"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        applicationId rootProject.ext.namespaceSample
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
         // config server
-        setBuildConfigField("SERVER_ADDRESS", properties['SERVER_ADDRESS'])
-    }
-
-    externalNativeBuild {
-        ndkBuild {
-            path file("Application.mk")
-        }
-    }
-
-    flavorDimensions 'cpuArch'
-    productFlavors {
-        arm64 {
-            dimension 'cpuArch'
-            ndk {
-                abiFilter "arm64-v8a"
-            }
-            minSdkVersion 21
-            applicationId 'com.fleetclient'
-            targetSdkVersion 35
-        }
-    }
-
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['src/main/jniLibs']
-        }
+        buildConfigField "String", "SERVER_ADDRESS", "\"${properties['SERVER_ADDRESS']}\""
     }
 
     buildTypes {
@@ -61,24 +35,26 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility rootProject.ext.sourceCompatibilityVersion
+        targetCompatibility rootProject.ext.targetCompatibilityVersion
     }
 }
 
 dependencies {
     implementation project(':library')
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
-
-    implementation 'org.java-websocket:Java-WebSocket:1.6.0'
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation rootProject.ext.appCompat
+    implementation rootProject.ext.design
+    implementation rootProject.ext.constraintLayout
+    implementation rootProject.ext.websocket
 }

@@ -1,10 +1,9 @@
-package you.thiago.walkifleet;
+package you.thiago.walkifleet.sample;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
@@ -22,6 +21,13 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
+import you.thiago.walkifleet.Device;
+import you.thiago.walkifleet.MSGListener;
+import you.thiago.walkifleet.Opus;
+import you.thiago.walkifleet.Protocol;
+import you.thiago.walkifleet.Random;
+import you.thiago.walkifleet.VoIP;
+
 public class LoginActivity extends AppCompatActivity implements MSGListener
 {
     // UI references.
@@ -36,11 +42,11 @@ public class LoginActivity extends AppCompatActivity implements MSGListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mLoginView = (EditText) findViewById(R.id.login);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mServerAddressView = (EditText) findViewById(R.id.serveraddress);
+        mLoginView = findViewById(R.id.login);
+        mPasswordView = findViewById(R.id.password);
+        mServerAddressView = findViewById(R.id.serveraddress);
 
-        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        Button mSignInButton = findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,8 +59,8 @@ public class LoginActivity extends AppCompatActivity implements MSGListener
 
         Protocol.isInitialLogin = true;
 
-        mLoginView.setText("USER" + String.valueOf(Random.nextInt(19) + 1));
-        mServerAddressView.setText("200.98.129.21:8000");
+        mLoginView.setText("USER" + (Random.nextInt(19) + 1));
+        mServerAddressView.setText(BuildConfig.SERVER_ADDRESS);
     }
 
     /**
