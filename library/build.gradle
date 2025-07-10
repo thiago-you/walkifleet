@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
 
 android {
@@ -10,6 +11,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
     }
 
     externalNativeBuild {
@@ -54,8 +57,19 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.appCompat
-    implementation rootProject.ext.design
-    implementation rootProject.ext.constraintLayout
     implementation rootProject.ext.websocket
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.findByName('release')
+
+                groupId = rootProject.ext.namespace
+                artifactId = rootProject.ext.name
+                version = rootProject.ext.versionName
+            }
+        }
+    }
 }

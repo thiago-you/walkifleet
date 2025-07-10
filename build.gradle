@@ -14,7 +14,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        
     }
 
     dependencies {
@@ -30,7 +29,7 @@ allprojects {
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.getLayout().getBuildDirectory()
 }
 
 apply from: rootProject.file('dependencies.gradle')
