@@ -12,4 +12,4 @@
 /captures
 .externalNativeBuild
 
-.env.properties
+env.properties
