@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="GROUPS" />
+        <ListView
+            android:id="@+id/groupView"
+            android:layout_width="match_parent"
+            android:choiceMode="singleChoice"
+            android:listSelector="@color/colorSelector"
+            android:background="@drawable/list_border"
+            android:layout_margin="5dp"
+            android:layout_height="200dp" >
+        </ListView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="USERS" />
+        <ListView
+            android:id="@+id/userView"
+            android:layout_width="match_parent"
+            android:choiceMode="singleChoice"
+            android:listSelector="@color/colorSelector"
+            android:background="@drawable/list_border"
+            android:layout_margin="5dp"
+            android:layout_height="200dp" >
+        </ListView>
+        <TextView
+            android:id="@+id/selectedObjectView"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark"
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+        <Button
+            android:id="@+id/pttBtn"
+            android:text="PTT"
+            android:background="@android:color/darker_gray"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </LinearLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
