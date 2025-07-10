@@ -9,13 +9,12 @@ if (propertiesFile.exists()) {
     propertiesFile.withInputStream { stream ->
         properties.load(stream)
     }
-} else {
-    throw new FileNotFoundException(".env.properties file not found")
 }
 
 android {
     namespace = rootProject.ext.namespaceSample
-    compileSdk rootProject.ext.targetSdkVersion
+    compileSdk = rootProject.ext.targetSdkVersion
+    compileSdkVersion rootProject.ext.targetSdkVersion
 
     defaultConfig {
         applicationId rootProject.ext.namespaceSample
@@ -35,10 +34,6 @@ android {
         }
     }
 
-    lintOptions {
-        abortOnError false
-    }
-
     buildFeatures {
         buildConfig = true
     }
@@ -46,6 +41,10 @@ android {
     compileOptions {
         sourceCompatibility rootProject.ext.sourceCompatibilityVersion
         targetCompatibility rootProject.ext.targetCompatibilityVersion
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
