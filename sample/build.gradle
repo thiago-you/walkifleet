@@ -3,7 +3,7 @@ plugins {
 }
 
 if (System.getenv("JITPACK") == "true") {
-    throw GradleException("Skip building sample module on JitPack")
+    throw new GradleException("Skip building sample module on JitPack")
 }
 
 Properties properties = new Properties()
