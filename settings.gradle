@@ -1,2 +1,5 @@
 include ':library'
-include ':sample'
+
+if (System.getenv("JITPACK") != "true") {
+    include ':sample'
+}
