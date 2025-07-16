@@ -2,6 +2,10 @@ plugins {
     id 'com.android.application'
 }
 
+if (System.getenv("JITPACK") == "true") {
+    throw GradleException("Skip building sample module on JitPack")
+}
+
 Properties properties = new Properties()
 def propertiesFile = rootProject.file('env.properties')
 
