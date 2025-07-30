@@ -59,6 +59,5 @@ dependencies {
     implementation rootProject.ext.websocket
 
     implementation project(':library')
-//    implementation 'com.github.thiago-you:walkifleet:v0.0.10'
-//    implementation files('libs/walkifleet.aar')
+//    implementation 'com.github.thiago-you:walkifleet:v0.0.11'
 }

@@ -3,32 +3,24 @@ package you.thiago.walkifleet.sample;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import java.util.UUID;
-
-import you.thiago.walkifleet.Device;
-import you.thiago.walkifleet.MSGListener;
-import you.thiago.walkifleet.Opus;
 import you.thiago.walkifleet.Protocol;
 import you.thiago.walkifleet.Random;
-import you.thiago.walkifleet.VoIP;
+import you.thiago.walkifleet.composition.VoipLoginProtocol;
 
-public class LoginActivity extends AppCompatActivity implements MSGListener
+public class LoginActivity extends AppCompatActivity
 {
     // UI references.
     private EditText mLoginView;
@@ -56,8 +48,6 @@ public class LoginActivity extends AppCompatActivity implements MSGListener
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-        Protocol.isInitialLogin = true;
 
         mLoginView.setText("USER" + (Random.nextInt(19) + 1));
         mServerAddressView.setText(BuildConfig.SERVER_ADDRESS);
@@ -99,10 +89,7 @@ public class LoginActivity extends AppCompatActivity implements MSGListener
         } else {
             // Show a progress spinner, and
             // perform the user login attempt.
-            Protocol.msgListener = this;
-            VoIP.DestinationIp = serveraddress.split(":")[0];
-            VoIP.serverAddress = serveraddress;
-            Protocol.connectWebSocket(serveraddress);
+            Protocol.msgListener = new LoginProtocol(serveraddress);
             showProgress(true);
         }
     }
@@ -143,80 +130,39 @@ public class LoginActivity extends AppCompatActivity implements MSGListener
         }
     }
 
-    @Override
-    public void OnMessage(JSONObject msg)
-    {
-        try
-        {
-            String message = msg.getString("MessageID");
-            switch (message)
-            {
-                case "SERVER_CONFIG":
-                    VoIP.DestinationPort = msg.getInt("VoipPort");
-                    VoIP.SampleRate = msg.getInt("AudioSampleRate");
-                    VoIP.FrameSize = msg.getInt("AudioFrameSize");
-                    VoIP.SSRC = Random.nextRandomPositiveInt();
-                    VoIP.login = mLoginView.getText().toString();
-                    VoIP.password = mPasswordView.getText().toString();
+    private class LoginProtocol extends VoipLoginProtocol {
 
-                    VoIP.Codec = new Opus(VoIP.SampleRate, VoIP.FrameSize);
-
-                    JSONObject devconf = new JSONObject();
-                    devconf.put("MessageID","DEVICE_CONFIG");
-                    devconf.put("Ssrc", VoIP.SSRC);
-                    devconf.put("AppName", "APIClientAndroid");
-                    devconf.put("VersionName", "5.5");
-                    devconf.put("VersionCode", 1);
-                    devconf.put("AudioCodec", 0); // Opus
-                    devconf.put("Password", VoIP.password);
-
-                    JSONObject deviceData = new JSONObject();
-                    deviceData.put("SessionID", Base64.encodeToString(Protocol.uuidToBytes(UUID.randomUUID()), Base64.NO_WRAP));
-                    deviceData.put("ID", Base64.encodeToString(Protocol.uuidToBytes(Device.GetDeviceID(this)), Base64.NO_WRAP));
-                    deviceData.put("StatusID", Base64.encodeToString(Protocol.uuidToBytes(new UUID(0L, 0L)), Base64.NO_WRAP));
-                    String deviceDescription = String.format("MANUFACTURER=%s; MODEL=%s; SERIAL=%s; OSVERSION=%s", android.os.Build.MANUFACTURER, android.os.Build.MODEL, android.os.Build.SERIAL, android.os.Build.VERSION.RELEASE);
-                    deviceData.put("DeviceDescription", deviceDescription);
-                    deviceData.put("Login", VoIP.login);
-                    deviceData.put("AvatarHash", "");
-                    devconf.put("DeviceData", deviceData);
-                    Protocol.sendMessage(devconf);
-                    break;
-                case "CONFIG_SERVER_RESPONSE_NACK":
-                    final String reason = msg.getString("Reason");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                             showProgress(false);
-                             Toast.makeText(LoginActivity.this, reason, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                   break;
-                case "CONFIG_SERVER_RESPONSE_ACK":
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showProgress(false);
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
-                    break;
-            }
+        public LoginProtocol(String serverAddress) {
+            super(serverAddress);
         }
-        catch(Exception e){
-            Log.e("LoginActivity", e.toString());
+
+        protected Context getProtocolContext() {
+            return LoginActivity.this;
         }
-    }
 
-    @Override
-    public void OnClose() {
-        Log.i("Websocket", "Closed");
-    }
+        protected String getVoipLogin() {
+            return mLoginView.getText().toString();
+        }
 
-    @Override
-    public void OnOpen() {
-        Log.i("Websocket", "Opened");
+        protected String getVoipPassword() {
+            return mPasswordView.getText().toString();
+        }
+
+        protected void configServerResponseNack(String reason) {
+            runOnUiThread(() -> {
+                showProgress(false);
+                Toast.makeText(LoginActivity.this, reason, Toast.LENGTH_LONG).show();
+            });
+        }
+
+        protected void configServerResponseAck() {
+            runOnUiThread(() -> {
+                showProgress(false);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            });
+        }
     }
 }
 

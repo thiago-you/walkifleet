@@ -19,15 +19,24 @@ import you.thiago.walkifleet.VoIP;
 
 abstract public class VoipLoginProtocol implements MSGListener
 {
-    abstract Context getProtocolContext();
+    public VoipLoginProtocol(String serverAddress) {
+        Protocol.isInitialLogin = true;
 
-    abstract void configServerResponseNack(String reason);
+        VoIP.DestinationIp = serverAddress.split(":")[0];
+        VoIP.serverAddress = serverAddress;
 
-    abstract void configServerResponseAck();
+        Protocol.connectWebSocket(serverAddress);
+    }
 
-    abstract String getVoipLogin();
+    protected abstract Context getProtocolContext();
 
-    abstract String getVoipPassword();
+    protected abstract void configServerResponseNack(String reason);
+
+    protected abstract void configServerResponseAck();
+
+    protected abstract String getVoipLogin();
+
+    protected abstract String getVoipPassword();
 
     @Override
     public void OnMessage(JSONObject msg)
