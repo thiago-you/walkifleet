@@ -70,3 +70,8 @@ afterEvaluate {
         }
     }
 }
+
+
+tasks.named("publishToMavenLocal").configure {
+    dependsOn("assembleRelease")
+}

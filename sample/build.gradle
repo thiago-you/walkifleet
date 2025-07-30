@@ -53,11 +53,12 @@ android {
 }
 
 dependencies {
-    implementation project(':library')
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     implementation rootProject.ext.appCompat
     implementation rootProject.ext.design
     implementation rootProject.ext.constraintLayout
     implementation rootProject.ext.websocket
+
+    implementation project(':library')
+//    implementation 'com.github.thiago-you:walkifleet:v0.0.10'
+//    implementation files('libs/walkifleet.aar')
 }
