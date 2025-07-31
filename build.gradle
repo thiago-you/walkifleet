@@ -2,7 +2,7 @@
 project.ext {
     minSdkVersion = 21
     targetSdkVersion = 35
-    ndkVersion = "29.0.13599879"
+    ndkVersion = "28.2.13676358"
     versionCode = 14
     versionName = '0.0.14'
     name = 'walkifleet'
