@@ -2,9 +2,9 @@
 project.ext {
     minSdkVersion = 21
     targetSdkVersion = 35
-    ndkVersion = "27.0.12077973"
-    versionCode = 12
-    versionName = '0.0.12'
+    ndkVersion = "29.0.13599879"
+    versionCode = 14
+    versionName = '0.0.14'
     name = 'walkifleet'
     namespace = 'you.thiago.walkifleet'
     namespaceSample = "you.thiago.walkifleet.sample"

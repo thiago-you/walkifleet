@@ -15,7 +15,7 @@ LOCAL_MODULE    := opus_wrapper
 LOCAL_SRC_FILES := $(OPUS)/Opus.cpp
 
 # Linking system libraries
-LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
+LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog -landroid -lOpenSLES
 
 # Include paths
 LOCAL_C_INCLUDES += $(OPUS)/Include
@@ -23,7 +23,6 @@ LOCAL_CFLAGS = -D__STDC_CONSTANT_MACROS -I$(OPUS)/Include
 
 # C++ flags
 LOCAL_CPPFLAGS += -std=c++11
-LOCAL_LDLIBS += -landroid -lOpenSLES
 
 # Build as a shared library
 include $(BUILD_SHARED_LIBRARY)
