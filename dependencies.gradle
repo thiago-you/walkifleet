@@ -4,6 +4,9 @@ ext {
   constraintLayout = 'com.android.support.constraint:constraint-layout:2.0.4'
   websocket = 'org.java-websocket:Java-WebSocket:1.6.0'
 
+  // conscrypt version with 16kb alignment
+  conscrypt = 'org.conscrypt:conscrypt-android:2.5.3'
+
   sourceCompatibilityVersion = JavaVersion.VERSION_17
   targetCompatibilityVersion = JavaVersion.VERSION_17
 }
