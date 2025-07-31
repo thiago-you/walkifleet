@@ -53,7 +53,7 @@ android {
     }
 
     publishing {
-        singleVariant("release") {
+        singleVariant("arm64Release") {
             withSourcesJar()
         }
     }
@@ -66,7 +66,7 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-            release(MavenPublication) {
+            create("release", MavenPublication) {
                 from components.findByName("arm64Release")
 
                 groupId = rootProject.ext.namespace
