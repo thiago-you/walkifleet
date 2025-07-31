@@ -51,6 +51,12 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -61,7 +67,7 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.findByName('release')
+                from components.findByName("arm64Release")
 
                 groupId = rootProject.ext.namespace
                 artifactId = rootProject.ext.name
@@ -70,7 +76,6 @@ afterEvaluate {
         }
     }
 }
-
 
 tasks.named("publishToMavenLocal").configure {
     dependsOn("assembleRelease")
