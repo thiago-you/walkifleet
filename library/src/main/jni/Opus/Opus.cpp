@@ -1,5 +1,6 @@
 //
-// Created by Denis on 18.06.2019.
+// Created by Denis on 06.2019
+// Updated by Thiago on 07.2025
 //
 
 #include <jni.h>
@@ -17,7 +18,7 @@ opus_int32 (*opusEncode)(OpusEncoder *st, const opus_int16 *pcm, int frame_size,
 int (*opusDecode)(OpusDecoder *st, const unsigned char *data, opus_int32 len, opus_int16 *pcm, int frame_size, int decode_fec);
 
 
-extern "C" JNIEXPORT jlong JNICALL Java_com_example_walkiefleetclientandroid_Opus_CreateEncoder(JNIEnv *env, jclass type, jint audioSampleRate)
+extern "C" JNIEXPORT jlong JNICALL Java_you_thiago_walkifleet_Opus_CreateEncoder(JNIEnv *env, jclass type, jint audioSampleRate)
 {
     int result = OPUS_INTERNAL_ERROR;
 
@@ -40,7 +41,7 @@ extern "C" JNIEXPORT jlong JNICALL Java_com_example_walkiefleetclientandroid_Opu
     return reinterpret_cast<long>(encoder);
 }
 
-extern "C" JNIEXPORT jlong JNICALL Java_com_example_walkiefleetclientandroid_Opus_CreateDecoder(JNIEnv *env, jclass type, jint audioSampleRate)
+extern "C" JNIEXPORT jlong JNICALL Java_you_thiago_walkifleet_Opus_CreateDecoder(JNIEnv *env, jclass type, jint audioSampleRate)
 {
     int result = OPUS_INTERNAL_ERROR;
 
@@ -63,7 +64,7 @@ extern "C" JNIEXPORT jlong JNICALL Java_com_example_walkiefleetclientandroid_Opu
     return reinterpret_cast<long>(decoder);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_example_walkiefleetclientandroid_Opus_DestroyEncoder(JNIEnv *env, jclass type, jlong encoder)
+extern "C" JNIEXPORT void JNICALL Java_you_thiago_walkifleet_Opus_DestroyEncoder(JNIEnv *env, jclass type, jlong encoder)
 {
     int result = OPUS_INTERNAL_ERROR;
 
@@ -79,7 +80,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_walkiefleetclientandroid_Opus
     opusEncoderDestroy(opusEncoder);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_example_walkiefleetclientandroid_Opus_DestroyDecoder(JNIEnv *env, jclass type, jlong decoder)
+extern "C" JNIEXPORT void JNICALL Java_you_thiago_walkifleet_Opus_DestroyDecoder(JNIEnv *env, jclass type, jlong decoder)
 {
     int result = OPUS_INTERNAL_ERROR;
 
@@ -95,7 +96,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_walkiefleetclientandroid_Opus
     opusDecoderDestroy(opusDecoder);
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_example_walkiefleetclientandroid_Opus_Encode(JNIEnv *env, jclass type, jlong encoder, jshortArray pcm_, jint pcmSize, jbyteArray encoded_, jint encodedSize)
+extern "C" JNIEXPORT jint JNICALL Java_you_thiago_walkifleet_Opus_Encode(JNIEnv *env, jclass type, jlong encoder, jshortArray pcm_, jint pcmSize, jbyteArray encoded_, jint encodedSize)
 {
     jshort *pcm = env->GetShortArrayElements(pcm_, NULL);
     jbyte *encoded = env->GetByteArrayElements(encoded_, NULL);
@@ -109,7 +110,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_example_walkiefleetclientandroid_Opus
     return result;
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_com_example_walkiefleetclientandroid_Opus_Decode(JNIEnv *env, jclass type, jlong decoder, jbyteArray encoded_, jint encodedSize, jshortArray pcm_, jint pcmSize)
+extern "C" JNIEXPORT jint JNICALL Java_you_thiago_walkifleet_Opus_Decode(JNIEnv *env, jclass type, jlong decoder, jbyteArray encoded_, jint encodedSize, jshortArray pcm_, jint pcmSize)
 {
     jbyte *encoded = env->GetByteArrayElements(encoded_, NULL);
     jshort *pcm = env->GetShortArrayElements(pcm_, NULL);

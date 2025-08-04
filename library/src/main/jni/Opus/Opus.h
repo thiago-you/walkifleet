@@ -1,13 +1,14 @@
 //
-// Created by Denis on 18.06.2019.
+// Created by Denis on 06.2019.
+// Updated by Thiago on 07.2025
 //
 
-#ifndef WALKIEFLEETCLIENTANDROID_OPUS_H
-#define WALKIEFLEETCLIENTANDROID_OPUS_H
+#ifndef WALKIFLEET_OPUS_H
+#define WALKIFLEET_OPUS_H
 
 
 
 
 
 
-#endif //WALKIEFLEETCLIENTANDROID_OPUS_H
+#endif //WALKIFLEET_OPUS_H
