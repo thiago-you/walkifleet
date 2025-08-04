@@ -63,6 +63,7 @@ android {
 dependencies {
     implementation rootProject.ext.websocket
     implementation rootProject.ext.conscrypt
+    implementation rootProject.ext.constraintLayout
 }
 
 afterEvaluate {

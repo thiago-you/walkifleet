@@ -19,6 +19,7 @@ import android.widget.Toast;
 import you.thiago.walkifleet.Protocol;
 import you.thiago.walkifleet.Random;
 import you.thiago.walkifleet.composition.VoipLoginProtocol;
+import you.thiago.walkifleet.mock.Util;
 
 public class LoginActivity extends AppCompatActivity
 {
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        mLoginView.setText("USER" + (Random.nextInt(19) + 1));
+        mLoginView.setText(Util.getRandomUser());
         mServerAddressView.setText(BuildConfig.SERVER_ADDRESS);
     }
 
