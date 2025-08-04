@@ -3,9 +3,9 @@ package you.thiago.walkifleet.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import you.thiago.walkifleet.Process;
 import you.thiago.walkifleet.Protocol;
 import you.thiago.walkifleet.VoIP;

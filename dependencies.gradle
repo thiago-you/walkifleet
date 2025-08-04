@@ -1,8 +1,9 @@
 ext {
-  appCompat = 'com.android.support:appcompat-v7:28.0.0'
-  design = 'com.android.support:design:28.0.0'
-  constraintLayout = 'com.android.support.constraint:constraint-layout:2.0.4'
+  core = 'androidx.core:core:1.0.0'
+  appCompat = 'androidx.appcompat:appcompat:1.5.1'
+  constraintLayout = 'androidx.constraintlayout:constraintlayout:2.1.4'
   websocket = 'org.java-websocket:Java-WebSocket:1.6.0'
+  design = 'com.google.android.material:material:1.7.0'
 
   // conscrypt version with 16kb alignment
   conscrypt = 'org.conscrypt:conscrypt-android:2.5.3'
