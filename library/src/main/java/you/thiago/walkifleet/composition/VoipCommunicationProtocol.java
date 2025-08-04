@@ -26,9 +26,9 @@ abstract public class VoipCommunicationProtocol implements MSGListener
 {
     public VoipCommunicationProtocol(Activity activity)
     {
-        CommunicationProcess.DeviceId = Util.getDeviceId(activity);
-
         VoIP.initAudio(activity);
+
+        CommunicationProcess.DeviceId = Util.getDeviceId(activity);
 
         try {
             if (Protocol.isInitialLogin) {
