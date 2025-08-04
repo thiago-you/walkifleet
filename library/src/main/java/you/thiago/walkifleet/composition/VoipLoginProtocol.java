@@ -16,6 +16,7 @@ import you.thiago.walkifleet.Opus;
 import you.thiago.walkifleet.Protocol;
 import you.thiago.walkifleet.Random;
 import you.thiago.walkifleet.VoIP;
+import you.thiago.walkifleet.helpers.Util;
 
 abstract public class VoipLoginProtocol implements MSGListener
 {
@@ -63,7 +64,7 @@ abstract public class VoipLoginProtocol implements MSGListener
                     break;
             }
         } catch (Exception e) {
-            Log.e("LoginActivity", e.toString());
+            Log.e("VoipLoginProtocol", e.toString());
         }
     }
 
@@ -110,7 +111,7 @@ abstract public class VoipLoginProtocol implements MSGListener
         JSONObject deviceData = new JSONObject();
 
         deviceData.put("SessionID", Base64.encodeToString(Protocol.uuidToBytes(UUID.randomUUID()), Base64.NO_WRAP));
-        deviceData.put("ID", Base64.encodeToString(Protocol.uuidToBytes(Device.GetDeviceID(getProtocolContext())), Base64.NO_WRAP));
+        deviceData.put("ID", Util.getDeviceId(getProtocolContext()));
         deviceData.put("StatusID", Base64.encodeToString(Protocol.uuidToBytes(new UUID(0L, 0L)), Base64.NO_WRAP));
         deviceData.put("DeviceDescription", deviceDescription);
         deviceData.put("Login", VoIP.login);

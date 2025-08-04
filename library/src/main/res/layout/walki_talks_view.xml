@@ -1,64 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="HardcodedText">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="GROUPS" />
+
+        <ListView
+            android:id="@+id/groupView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="200dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/list_border"
+            android:choiceMode="singleChoice"
+            android:listSelector="@color/walkifleet_colorSelector" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="GROUPS" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="USERS" />
 
-            <ListView
-                android:id="@+id/groupView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/list_border"
-                android:choiceMode="singleChoice"
-                android:listSelector="@color/walkifleet_colorSelector"></ListView>
+        <ListView
+            android:id="@+id/userView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/list_border"
+            android:choiceMode="singleChoice"
+            android:listSelector="@color/walkifleet_colorSelector" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="USERS" />
+        <TextView
+            android:id="@+id/selectedObjectView"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark" />
 
-            <ListView
-                android:id="@+id/userView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/list_border"
-                android:choiceMode="singleChoice"
-                android:listSelector="@color/walkifleet_colorSelector"></ListView>
+        <Button
+            android:id="@+id/pttBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/darker_gray"
+            android:text="PTT (HOLD)" />
 
-            <TextView
-                android:id="@+id/selectedObjectView"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:textAlignment="center"
-                android:textColor="@android:color/holo_blue_dark" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/pttBtn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:background="@android:color/darker_gray"
-                android:text="PTT" />
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

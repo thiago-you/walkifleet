@@ -17,9 +17,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import you.thiago.walkifleet.Protocol;
-import you.thiago.walkifleet.Random;
 import you.thiago.walkifleet.composition.VoipLoginProtocol;
-import you.thiago.walkifleet.mock.Util;
+import you.thiago.walkifleet.helpers.Util;
 
 public class LoginActivity extends AppCompatActivity
 {
