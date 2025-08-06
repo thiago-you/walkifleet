@@ -24,11 +24,13 @@ import you.thiago.walkifleet.helpers.Util;
 
 abstract public class VoipCommunicationProtocol implements MSGListener
 {
-    public VoipCommunicationProtocol(Activity activity)
+    public VoipCommunicationProtocol(Context context)
     {
-        VoIP.initAudio(activity);
+        if (context instanceof Activity) {
+            VoIP.initAudio((Activity) context);
+        }
 
-        CommunicationProcess.DeviceId = Util.getDeviceId(activity);
+        CommunicationProcess.DeviceId = Util.getDeviceId(context);
 
         try {
             if (Protocol.isInitialLogin) {
