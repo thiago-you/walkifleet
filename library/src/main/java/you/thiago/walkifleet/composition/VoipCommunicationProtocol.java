@@ -47,6 +47,8 @@ abstract public class VoipCommunicationProtocol implements MSGListener
 
     protected abstract Process.ProcessControl getProcessControl();
 
+    protected abstract void initAudioVoip();
+
     protected abstract void onUpdateDataEx(int dataType);
 
     protected abstract void onPptResponse(int response);

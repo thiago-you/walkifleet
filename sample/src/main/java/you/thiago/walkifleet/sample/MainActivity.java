@@ -43,6 +43,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
+        protected void initAudioVoip() {
+            VoIP.initAudio(MainActivity.this);
+        }
+
+        @Override
         protected void onUpdateDataEx(int dataType) {
             runOnUiThread(() -> {
                 switch (dataType)
