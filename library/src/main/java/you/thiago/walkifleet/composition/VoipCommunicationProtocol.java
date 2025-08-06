@@ -26,11 +26,15 @@ abstract public class VoipCommunicationProtocol implements MSGListener
 {
     public VoipCommunicationProtocol(Context context)
     {
-        if (context instanceof Activity) {
-            VoIP.initAudio((Activity) context);
-        }
-
         CommunicationProcess.DeviceId = Util.getDeviceId(context);
+
+        if (context instanceof Activity) {
+            initAudioVoip((Activity) context);
+        }
+    }
+
+    protected void initAudioVoip(Activity activity) {
+        VoIP.initAudio(activity);
 
         try {
             if (Protocol.isInitialLogin) {
@@ -46,8 +50,6 @@ abstract public class VoipCommunicationProtocol implements MSGListener
     protected abstract Context getProtocolContext();
 
     protected abstract Process.ProcessControl getProcessControl();
-
-    protected abstract void initAudioVoip(Activity activity);
 
     protected abstract void onUpdateDataEx(int dataType);
 
