@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity
 
     private class MainProtocol extends VoipCommunicationProtocol {
 
-        public MainProtocol(Activity activity) {
-            super(activity);
+        public MainProtocol(Context context) {
+            super(context);
         }
 
         protected Context getProtocolContext() {
@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void initAudioVoip() {
-            VoIP.initAudio(MainActivity.this);
+        protected void initAudioVoip(Activity activity) {
+            VoIP.initAudio(activity);
         }
 
         @Override
